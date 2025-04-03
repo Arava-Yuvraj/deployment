@@ -1,25 +1,17 @@
 name: Selective File Copy and PR Creation
 
 on:
-  pull_request:
-    branches:
-      - test
-    types:
-      - opened
-      - synchronize
-
-  workflow_dispatch:  # Allows manual trigger for debugging
+  workflow_dispatch:  # Allows manual trigger
 
 jobs:
   selective-copy:
-    if: github.event.pull_request.base.ref == 'test' && github.event.pull_request.head.ref == 'develop'
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Test Branch
+      - name: Checkout Develop Branch
         uses: actions/checkout@v3
         with:
-          ref: test
+          ref: develop
           fetch-depth: 0
 
       - name: Configure Git
@@ -34,22 +26,10 @@ jobs:
           echo "UNIQUE_BRANCH=$UNIQUE_BRANCH" >> $GITHUB_ENV
           echo "Created branch: $UNIQUE_BRANCH"
 
-      - name: Create Selective Branch
+      - name: Create and Push Selective Branch
         run: |
           git checkout -b $UNIQUE_BRANCH
           git push origin $UNIQUE_BRANCH
-
-      - name: Checkout Develop Branch Separately
-        run: |
-          git fetch origin develop
-          git checkout develop
-
-      - name: List Files in Tree and Check Branch
-        run: |
-          echo "Listing files in the repository:"
-          tree -a
-          echo "Current branch:"
-          git branch --show-current
 
       - name: Read Allowed Files from files.txt
         id: allowed-files
@@ -61,11 +41,6 @@ jobs:
             echo "ALLOWED_FILES=" >> $GITHUB_ENV
             echo "Warning: .github/files.txt not found or empty."
           fi
-
-      - name: Debug Allowed Files
-        run: |
-          echo "Allowed files:"
-          echo "$ALLOWED_FILES"
 
       - name: Copy Allowed Files to Selective Branch
         run: |
