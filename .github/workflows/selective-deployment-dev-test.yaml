@@ -42,6 +42,13 @@
               git fetch origin develop
               git checkout develop
 
+          - name: List Files in Tree and Check Branch
+            run: |
+              echo "Listing files in the repository:"
+              tree -a
+              echo "Current branch:"
+              git branch --show-current
+            
           - name: Read Allowed Files from files.txt
             id: allowed-files
             run: |
