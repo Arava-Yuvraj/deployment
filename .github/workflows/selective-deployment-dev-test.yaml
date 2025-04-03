@@ -47,7 +47,7 @@ jobs:
           git checkout $UNIQUE_BRANCH
           for FILE in $ALLOWED_FILES; do
             if [ -f "$FILE" ]; then
-              git checkout develop -- "$FILE"
+              git restore --source=develop -- "$FILE"
               echo "Copied $FILE"
             else
               echo "File not found: $FILE"
@@ -55,8 +55,12 @@ jobs:
           done
 
           git status  # Check for file changes
-          git add $ALLOWED_FILES
-          git commit -m "Selective merge: Copy allowed files from develop to $UNIQUE_BRANCH" || echo "No changes to commit"
+          if [ -n "$ALLOWED_FILES" ]; then
+            git add $ALLOWED_FILES
+            git commit -m "Selective merge: Copy allowed files from develop to $UNIQUE_BRANCH" || echo "No changes to commit"
+          else
+            echo "No allowed files to add or commit."
+          fi
           git push origin $UNIQUE_BRANCH
 
       - name: Create PR from Selective Branch to Test
