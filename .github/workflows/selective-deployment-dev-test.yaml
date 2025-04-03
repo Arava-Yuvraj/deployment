@@ -22,8 +22,8 @@
 
           - name: Configure Git
             run: |
-              git config --global user.name "github-actions"
-              git config --global user.email "github-actions@github.com"
+              git config --global user.name "yuvrajabr"
+              git config --global user.email "yuvrajabr@gmail.com"
 
           - name: Generate Unique Branch Name
             id: branch-name
@@ -45,8 +45,13 @@
           - name: Read Allowed Files from files.txt
             id: allowed-files
             run: |
-              ALLOWED_FILES=$(cat .github/files.txt | tr '\n' ' ')
-              echo "ALLOWED_FILES=$ALLOWED_FILES" >> $GITHUB_ENV
+              if [ -f ".github/files.txt" ]; then
+                ALLOWED_FILES=$(cat .github/files.txt | tr '\n' ' ')
+                echo "ALLOWED_FILES=$ALLOWED_FILES" >> $GITHUB_ENV
+              else
+                echo "ALLOWED_FILES=" >> $GITHUB_ENV
+                echo "Warning: .github/files.txt not found or empty."
+              fi
 
           - name: Copy Allowed Files to Selective Branch
             run: |
