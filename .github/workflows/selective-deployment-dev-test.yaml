@@ -64,7 +64,7 @@
             run: |
               gh pr create --base test --head $UNIQUE_BRANCH --title "Selective Merge: Develop to Test" --body "This PR contains only allowed files from develop to test."
             env:
-              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              GITHUB_TOKEN: ${{ secrets.TOKEN }}
 
           - name: Delete Selective Branch After PR
             run: |
