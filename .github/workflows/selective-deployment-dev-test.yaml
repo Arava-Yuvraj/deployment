@@ -1,0 +1,71 @@
+    name: Selective File Copy and PR Creation
+
+    on:
+      pull_request:
+        branches:
+          - test
+        types:
+          - opened
+          - synchronize
+
+    jobs:
+      selective-copy:
+        if: github.event.pull_request.base.ref == 'test' && github.event.pull_request.head.ref == 'develop'
+        runs-on: ubuntu-latest
+
+        steps:
+          - name: Checkout Test Branch
+            uses: actions/checkout@v3
+            with:
+              ref: test
+              fetch-depth: 0
+
+          - name: Configure Git
+            run: |
+              git config --global user.name "github-actions"
+              git config --global user.email "github-actions@github.com"
+
+          - name: Generate Unique Branch Name
+            id: branch-name
+            run: |
+              UNIQUE_BRANCH="selectivefile-$(date +%s)"
+              echo "UNIQUE_BRANCH=$UNIQUE_BRANCH" >> $GITHUB_ENV
+              echo "Created branch: $UNIQUE_BRANCH"
+
+          - name: Create Selective Branch
+            run: |
+              git checkout -b $UNIQUE_BRANCH
+              git push origin $UNIQUE_BRANCH
+
+          - name: Checkout Develop Branch Separately
+            run: |
+              git fetch origin develop
+              git checkout develop
+
+          - name: Read Allowed Files from files.txt
+            id: allowed-files
+            run: |
+              ALLOWED_FILES=$(cat .github/files.txt | tr '\n' ' ')
+              echo "ALLOWED_FILES=$ALLOWED_FILES" >> $GITHUB_ENV
+
+          - name: Copy Allowed Files to Selective Branch
+            run: |
+              git checkout $UNIQUE_BRANCH
+              for FILE in $ALLOWED_FILES; do
+                if [ -f "$FILE" ]; then
+                  git checkout develop -- "$FILE"
+                fi
+              done
+              git add $ALLOWED_FILES
+              git commit -m "Selective merge: Copy allowed files from develop to $UNIQUE_BRANCH"
+              git push origin $UNIQUE_BRANCH
+
+          - name: Create PR from Selective Branch to Test
+            run: |
+              gh pr create --base test --head $UNIQUE_BRANCH --title "Selective Merge: Develop to Test" --body "This PR contains only allowed files from develop to test."
+            env:
+              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+          - name: Delete Selective Branch After PR
+            run: |
+              git push origin --delete $UNIQUE_BRANCH
