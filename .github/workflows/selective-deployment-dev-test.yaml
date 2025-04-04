@@ -1,7 +1,12 @@
 name: Selective File Copy and PR Creation
 
 on:
-  workflow_dispatch:  # Allows manual trigger
+  pull_request:
+    branches:
+      - test
+    types:
+      - opened
+      - synchronize
 
 jobs:
   selective-copy:
