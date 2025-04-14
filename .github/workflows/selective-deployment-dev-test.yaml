@@ -28,8 +28,8 @@ jobs:
       - name: fetch all branches, checkout develop and test branch
         run: |
           git fetch --all
-          git checkout origin/develop
-          git checkout origin/test  
+          git checkout -b develop origin/develop
+          git checkout -b test origin/test
       
       - name: List all checked out branches
         run: |
