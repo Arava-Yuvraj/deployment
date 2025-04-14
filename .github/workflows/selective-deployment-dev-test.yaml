@@ -59,23 +59,23 @@ jobs:
             echo "Warning: .github/files.txt not found or empty."
           fi
 
-      # - name: Copy Allowed Files to Selective Branch
-      #   run: |
-      #     # git checkout $UNIQUE_BRANCH
-      #     for FILE in $ALLOWED_FILES; do
-      #       if [ -f "$FILE" ]; then
-      #         echo "file to copy -> $FILE"
-      #         git checkout develop -- "$FILE"
-      #         echo "Copied -> $FILE"
-      #       else
-      #         echo "File not found: $FILE"
-      #       fi
-      #     done
+      - name: Copy Allowed Files to Selective Branch
+        run: |
+          # git checkout $UNIQUE_BRANCH
+          for FILE in $ALLOWED_FILES; do
+            if [ -f "$FILE" ]; then
+              echo "file to copy -> $FILE"
+              git checkout develop -- "$FILE"
+              echo "Copied -> $FILE"
+            else
+              echo "File not found: $FILE"
+            fi
+          done
 
-      #     git status  # Check for file changes
-      #     git add $ALLOWED_FILES
-      #     git commit -m "Selective merge: Copy allowed files from develop to $UNIQUE_BRANCH" || echo "No changes to commit"
-      #     git push origin $UNIQUE_BRANCH
+          git status  # Check for file changes
+          git add $ALLOWED_FILES
+          git commit -m "Selective merge: Copy allowed files from develop to $UNIQUE_BRANCH" || echo "No changes to commit"
+          git push origin $UNIQUE_BRANCH
 
       #     - name: Create PR from Selective Branch to Test
       #       run: |
