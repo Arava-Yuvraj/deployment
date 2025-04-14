@@ -8,24 +8,30 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Develop Branch
-        uses: actions/checkout@v3
-        with:
-          ref: develop
-          fetch-depth: 0
+      # - name: Checkout Develop Branch
+      #   uses: actions/checkout@v3
+      #   with:
+      #     ref: develop
+      #     fetch-depth: 0
 
-      - name: Checkout Test Branch
-        uses: actions/checkout@v3
-        with:
-          ref: test
-          fetch-depth: 0
+      # - name: Checkout Test Branch
+      #   uses: actions/checkout@v3
+      #   with:
+      #     ref: test
+      #     fetch-depth: 0
   
       - name: Configure Git
         run: |
           git config --global user.name "yuvrajabr"
           git config --global user.email "yuvrajabr@gmail.com"
 
-      - name: Configure Git
+      - name: fetch all branches, checkout develop and test branch
+        run: |
+          git fetch --all
+          git checkout origin/develop
+          git checkout origin/develop  
+      
+      - name: List all checked out branches
         run: |
           git branch
           
@@ -47,30 +53,32 @@ jobs:
           if [ -f ".github/files.txt" ]; then
             ALLOWED_FILES=$(cat .github/files.txt | tr '\n' ' ')
             echo "ALLOWED_FILES=$ALLOWED_FILES" >> $GITHUB_ENV
+            echo "$ALLOWED_FILES" 
           else
             echo "ALLOWED_FILES=" >> $GITHUB_ENV
             echo "Warning: .github/files.txt not found or empty."
           fi
 
-      - name: Copy Allowed Files to Selective Branch
-        run: |
-          git checkout $UNIQUE_BRANCH
-          for FILE in $ALLOWED_FILES; do
-            if [ -f "$FILE" ]; then
-              git checkout develop -- "$FILE"
-              echo "Copied $FILE"
-            else
-              echo "File not found: $FILE"
-            fi
-          done
+      # - name: Copy Allowed Files to Selective Branch
+      #   run: |
+      #     # git checkout $UNIQUE_BRANCH
+      #     for FILE in $ALLOWED_FILES; do
+      #       if [ -f "$FILE" ]; then
+      #         echo "file to copy -> $FILE"
+      #         git checkout develop -- "$FILE"
+      #         echo "Copied -> $FILE"
+      #       else
+      #         echo "File not found: $FILE"
+      #       fi
+      #     done
 
-          git status  # Check for file changes
-          git add $ALLOWED_FILES
-          git commit -m "Selective merge: Copy allowed files from develop to $UNIQUE_BRANCH" || echo "No changes to commit"
-          git push origin $UNIQUE_BRANCH
+      #     git status  # Check for file changes
+      #     git add $ALLOWED_FILES
+      #     git commit -m "Selective merge: Copy allowed files from develop to $UNIQUE_BRANCH" || echo "No changes to commit"
+      #     git push origin $UNIQUE_BRANCH
 
-          - name: Create PR from Selective Branch to Test
-            run: |
-              gh pr create --base test --head $UNIQUE_BRANCH --title "Selective Merge: Develop to Test" --body "This PR contains only allowed files from develop to test."
-            env:
-              GITHUB_TOKEN: ${{ secrets.TOKEN }}
+      #     - name: Create PR from Selective Branch to Test
+      #       run: |
+      #         gh pr create --base test --head $UNIQUE_BRANCH --title "Selective Merge: Develop to Test" --body "This PR contains only allowed files from develop to test."
+      #       env:
+      #         GITHUB_TOKEN: ${{ secrets.TOKEN }}
