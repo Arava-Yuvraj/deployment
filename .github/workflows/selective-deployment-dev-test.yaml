@@ -8,12 +8,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Develop Branch
-        uses: actions/checkout@v3
-        with:
-          ref: develop
-          fetch-depth: 0
-
       - name: Checkout Test Branch
         uses: actions/checkout@v3
         with:
@@ -25,12 +19,6 @@ jobs:
           git config --global user.name "yuvrajabr"
           git config --global user.email "yuvrajabr@gmail.com"
 
-      - name: fetch all branches, checkout develop and test branch
-        run: |
-          git fetch --all
-          git checkout -b develop origin/develop
-          git checkout -b test origin/test
-      
       - name: List all checked out branches
         run: |
           git branch
@@ -65,7 +53,7 @@ jobs:
           for FILE in $ALLOWED_FILES; do
             if [ -f "$FILE" ]; then
               echo "file to copy -> $FILE"
-              git checkout develop -- "$FILE"
+              git checkout origin/develop -- "$FILE"
               echo "Copied -> $FILE"
             else
               echo "File not found: $FILE"
