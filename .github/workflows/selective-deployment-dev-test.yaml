@@ -8,17 +8,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # - name: Checkout Develop Branch
-      #   uses: actions/checkout@v3
-      #   with:
-      #     ref: develop
-      #     fetch-depth: 0
+      - name: Checkout Develop Branch
+        uses: actions/checkout@v3
+        with:
+          ref: develop
+          fetch-depth: 0
 
-      # - name: Checkout Test Branch
-      #   uses: actions/checkout@v3
-      #   with:
-      #     ref: test
-      #     fetch-depth: 0
+      - name: Checkout Test Branch
+        uses: actions/checkout@v3
+        with:
+          ref: test
+          fetch-depth: 0
   
       - name: Configure Git
         run: |
