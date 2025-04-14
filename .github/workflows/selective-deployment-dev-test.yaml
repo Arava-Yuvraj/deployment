@@ -65,8 +65,8 @@ jobs:
           git commit -m "Selective merge: Copy allowed files from develop to $UNIQUE_BRANCH" || echo "No changes to commit"
           git push origin $UNIQUE_BRANCH
 
-      #     - name: Create PR from Selective Branch to Test
-      #       run: |
-      #         gh pr create --base test --head $UNIQUE_BRANCH --title "Selective Merge: Develop to Test" --body "This PR contains only allowed files from develop to test."
-      #       env:
-      #         GITHUB_TOKEN: ${{ secrets.TOKEN }}
+      - name: Create PR from Selective Branch to Test
+        run: |
+          gh pr create --base test --head $UNIQUE_BRANCH --title "Selective Merge: Develop to Test" --body "This PR contains only allowed files from develop to test."
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
