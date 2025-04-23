@@ -49,7 +49,7 @@ jobs:
 
       - name: Copy Allowed Files to Selective Branch
         run: |
-          # git checkout $UNIQUE_BRANCH
+          git checkout $UNIQUE_BRANCH
           for FILE in $ALLOWED_FILES; do
             if [ -f "$FILE" ]; then
               echo "file to copy -> $FILE"
