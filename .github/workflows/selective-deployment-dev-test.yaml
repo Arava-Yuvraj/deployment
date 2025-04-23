@@ -46,12 +46,9 @@ jobs:
         run: |
           git checkout $UNIQUE_BRANCH
           for FILE in $ALLOWED_FILES; do
-            if [ -f "$FILE" ]; then
-              git checkout develop -- "$FILE"
-              echo "Copied $FILE"
-            else
-              echo "File not found: $FILE"
-            fi
+            echo "$FILE - to read from develop branch"
+            git checkout develop -- "$FILE"
+            echo "Copied $FILE"
           done
 
           git status  # Check for file changes
