@@ -65,6 +65,6 @@ jobs:
 
       - name: Create PR from Selective Branch to Test
         run: |
-          gh pr create --base test --head $UNIQUE_BRANCH --title "Selective Merge: Develop to Test" --body "This PR contains only allowed files from develop to test."
+          gh pr create --base test --head $UNIQUE_BRANCH --title "Selective Merge: Develop to Test" --body "This PR contains only allowed files from develop to test." --reviewer "yuvrajabr"
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
